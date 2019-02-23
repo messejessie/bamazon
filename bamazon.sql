@@ -16,7 +16,7 @@ CREATE TABLE inventory(
 INSERT INTO inventory (item_name, department_name, price, quantity,stock_quantity)
 VALUES 
 
-("Tesla Roadster","Car", 100000.00, 20, 100),
+("Tesla Roadster","Travel", 100000.00, 20, 100),
 ("Solar Roofs","Home Improvement", 50000.00, 150, 3000),
 ("Starship", "Travel", 300000.00, 5, 5),
 ("Not a Flame Thrower","Family Fun", 500.00, 20, 500),

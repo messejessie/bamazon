@@ -24,3 +24,25 @@ connection.connect(function(err) {
   console.log("I works");
 });
 
+function start() {
+  inquirer
+    .prompt({
+      name: "Departments",
+      type: "list",
+      message: "What Department would you like to took at?",
+      choices: ["", "", ""]
+    })
+    .then(function(answer) {
+      // based on their answer, either call the bid or the post functions
+      if (answer.postOrBid === "POST") {
+        postAuction();
+      }
+      else if(answer.postOrBid === "BID") {
+        bidAuction();
+      } else{
+        connection.end();
+      }
+    });
+}
+
+
