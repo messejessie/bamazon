@@ -1,5 +1,9 @@
-let mysql = require("mysql");
-let inquirer = require("inquirer");
+const mysql = require("mysql");
+const inquirer = require("inquirer");
+const fs = require("fs");
+
+let itemStmt = "";
+
 
 // create the connection information for the sql database
 let connection = mysql.createConnection({
@@ -25,32 +29,33 @@ connection.connect(function (err) {
   start()
 });
 function start() {
-    connection.query("SELECT * FROM inventory", function(err, results) {
+  connection.query("SELECT * FROM inventory", function (err, results) {
 
     if (err) throw err;
     //console.log(results);
-    // once you have the items, prompt the user for which they'd like to bid on
     inquirer
       .prompt([
         {
           name: "choice",
           type: "rawlist",
-          choices: function() {
+          choices: function () {
             var choiceArray = [];
             for (var i = 0; i < results.length; i++) {
               var item_info = "";
-              item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
+              item_info = results[i].department_name
+              //item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
               choiceArray.push(item_info);
             }
             return choiceArray;
           },
-          message: "What Item would you like to purchase?"
+          message: "What department would you like to view?"
         },
-        {
-          name: "qty",
-          type: "input",
-          message: "How many would you like to purachase?"
-        },
+        // {
+        //   name: "qty",
+        //   type: "input",
+        //   message: "How many would you like to purachase?"
+        // },
+        //confirm
         {
           type: "confirm",
           name: "confirm",
@@ -58,40 +63,53 @@ function start() {
           default: true
         }
       ])
-      .then(function(answer) {
-        // get the information of the chosen item
-        var chosenItem;
-        for (var i = 0; i < results.length; i++) {
-          if (results[i].item_name === answer.choice) {
-            chosenItem = results[i];
-          }
-        }
+      .then(function (inquirerResponse) {
+        if (inquirerResponse.confirm) {
 
-        // determine if bid was high enough
-        if (chosenItem.price< parseInt(answer.price)) {
-          // bid was high enough, so update db, let the user know, and start over
-          connection.query(
-            "UPDATE auctions SET ? WHERE ?",
-            [
-              {
-                highest_bid: answer.bid
-              },
-              {
-                id: chosenItem.id
-              }
-            ],
-            function(error) {
-              if (error) throw err;
-              console.log("Bid placed successfully!");
-              start();
-            }
-          );
-        }
-        else {
-          // bid wasn't high enough, so apologize and start over
-          console.log("Your bid was too low. Try again...");
-          start();
-        }
+          console.log(inquirerResponse.confirm)
+          buyItem(inquirerResponse);
+        } else {
+          console.log("Please come back when you are ready to make a purchase.");
+        };
+
       });
   });
 }
+// show the items and pricing
+function buyItem(inquirerResponse) {
+  connection.query("SELECT * FROM inventory WHERE ?", { department_name: inquirerResponse.department },
+    function (err, results) {
+      //console.log(results)
+      inquirer
+        .prompt([
+          {
+            name: "choice",
+            type: "rawlist",
+            choices: function () {
+              let choiceArray = [];
+              for (let i = 0; i < results.length; i++) {
+                var item_info = item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
+                choiceArray.push(item_info);
+              };
+              return choiceArray
+            },
+            message: "Which item would you like to purchase?"
+          },
+          {
+            name: "qty",
+            type: "input",
+            message: "Please enter a vaild quantity."
+          },
+          {
+            type: "Ccnfirm",
+            name: "confirm",
+            message: "Please confirm your order.",
+            default: true,
+            
+          },
+          
+        ]);
+
+    });
+
+};
