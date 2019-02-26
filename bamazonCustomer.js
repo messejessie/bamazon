@@ -36,7 +36,7 @@ function start() {
     inquirer
       .prompt([
         {
-          name: "choice",
+          name: "department",
           type: "rawlist",
           choices: function () {
             let choiceArray = [];
@@ -77,9 +77,11 @@ function start() {
 }
 // show the items and pricing
 function buyItem(inquirerResponse) {
-  connection.query("SELECT * FROM inventory WHERE ?", { department_name: inquirerResponse.department },
+  connection.query("SELECT * FROM inventory WHERE ?", { department_name: inquirerResponse.department},
     function (err, results) {
       //console.log(results)
+      if (err) throw err;
+      console.log(results);
       inquirer
         .prompt([
           {
@@ -88,11 +90,12 @@ function buyItem(inquirerResponse) {
             choices: function () {
               let choiceArray = [];
               for (let i = 0; i < results.length; i++) {
-                let item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
+                let item_info = ""
+                item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
                 choiceArray.push(item_info);
               };
               return choiceArray
-            },
+            }, 
             message: "Which item would you like to purchase?"
           },
           {
