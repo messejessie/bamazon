@@ -77,11 +77,11 @@ function start() {
 }
 // show the items and pricing
 function buyItem(inquirerResponse) {
-  connection.query("SELECT * FROM inventory WHERE ?", { department_name: inquirerResponse.department},
+  connection.query("SELECT * FROM inventory WHERE ?", { department_name: inquirerResponse.department },
     function (err, results) {
       //console.log(results)
       if (err) throw err;
-      console.log(results);
+      //console.log(results);
       inquirer
         .prompt([
           {
@@ -91,11 +91,11 @@ function buyItem(inquirerResponse) {
               let choiceArray = [];
               for (let i = 0; i < results.length; i++) {
                 let item_info = ""
-                item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
+                item_info = results[i].item_name + ", " + results[i].department_name + ", " + "price =" + ", " + results[i].price;
                 choiceArray.push(item_info);
               };
               return choiceArray
-            }, 
+            },
             message: "Which item would you like to purchase?"
           },
           {
@@ -115,20 +115,22 @@ function buyItem(inquirerResponse) {
         .then(function (inquirerResponse) {
           if (inquirerResponse.confirm) {
             let customerItem;
-           // console.log(results.length);
+            //console.log(inquirerResponse);
+            str = inquirerResponse.choice
+            //console.log(str)
             let customerChoice = str.split(", ")
             customerChoice = customerChoice[0];
-            console.log(customerChoice);
+            //console.log(customerChoice[0]);
             for (let i = 0; i < results.length; i++) {
               if (results[i].item_name == customerChoice) {
                 customerItem = results[i];
                 console.log(customerItem);
               }
-              {
-                console.log(inquirerResponse);
-                console.log(customerItem);
-                console.log(customer.item_id)
-              }
+              // {
+              //   console.log(inquirerResponse);
+              //   console.log(customerItem);
+              //   console.log(customer.item_id)
+              // }
             }
             connection.query("SELECT * FROM inventory WHERE ?", { item_id: customerItem.item_id },
               function (err, results) {
@@ -149,10 +151,10 @@ function buyItem(inquirerResponse) {
               });
           }
 
-          else{
+          else {
             console.log("Please come back when you are ready to make a purchase. Have a nice day!")
           }
-          
+
           connection.end();
 
         });
