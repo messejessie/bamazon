@@ -115,8 +115,9 @@ function buyItem(inquirerResponse) {
         .then(function (inquirerResponse) {
           if (inquirerResponse.confirm) {
             let customerItem;
-            console.log(results.length);
+           // console.log(results.length);
             let customerChoice = str.split(", ")
+            customerChoice = customerChoice[0];
             console.log(customerChoice);
             for (let i = 0; i < results.length; i++) {
               if (results[i].item_name == customerChoice) {
