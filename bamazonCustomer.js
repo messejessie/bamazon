@@ -12,7 +12,7 @@ let connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "Te$la@2019",
+  password: "",
   database: "products_DB"
 });
 
@@ -53,6 +53,7 @@ function start() {
         },
         {
           type: "confirm",
+          name: "confirm",
           message: "Are you sure you want to purchase?",
           default: true
         }
