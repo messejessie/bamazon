@@ -69,7 +69,7 @@ function start() {
           console.log(inquirerResponse.confirm)
           buyItem(inquirerResponse);
         } else {
-          console.log("Please come back when you are ready to make a purchase.");
+          console.log("Please come back when you are ready to make a purchase. Have a nice day!");
         };
 
       });
@@ -126,20 +126,32 @@ function buyItem(inquirerResponse) {
                 console.log(customer.item_id)
               }
             }
-            connection.query("SELECT * FROM inventory WHERE ?", {item_id: customerItem.item_id},
-            function(err, results){
-              if(err) throw err;
-              console.log("Success!");
-              console.log(results[0]);
-              //
-              qty =parseInt(inquirerResponse.qty);
+            connection.query("SELECT * FROM inventory WHERE ?", { item_id: customerItem.item_id },
+              function (err, results) {
+                if (err) throw err;
+                console.log("Success!");
+                console.log(results[0]);
+                //
+                qty = parseInt(inquirerResponse.qty);
+                if (results[0].stock_quanity > qty) {
+                  let total = (qty * customerItem.price);
+                  let mess = `Your purchase of ${inquirerResponse.qty} ${customerItem.item_name} ${customerItem.department_name} comes to ${total}! Congrats!`
+                  console.log(mess);
+                } else {
+                  mess = `Sorry I only have ${results[0].stock_quanity} in stock for ${customerItem.item_name}`
+                  console.log(mess);
+                }
 
-            })
+              });
           }
 
+          else{
+            console.log("Please come back when you are ready to make a purchase. Have a nice day!")
+          }
+          
+          connection.end();
 
-
-        })
+        });
 
     });
 
