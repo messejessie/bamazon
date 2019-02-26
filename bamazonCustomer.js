@@ -39,12 +39,12 @@ function start() {
           name: "choice",
           type: "rawlist",
           choices: function () {
-            var choiceArray = [];
-            for (var i = 0; i < results.length; i++) {
-              var item_info = "";
-              item_info = results[i].department_name
+            let choiceArray = [];
+            for (let i = 0; i < results.length; i++) {
+              let department_info = "";
+              department_info = results[i].department_name
               //item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
-              choiceArray.push(item_info);
+              choiceArray.push(department_info);
             }
             return choiceArray;
           },
@@ -88,7 +88,7 @@ function buyItem(inquirerResponse) {
             choices: function () {
               let choiceArray = [];
               for (let i = 0; i < results.length; i++) {
-                var item_info = item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
+                let item_info = results[i].item_name + " " + results[i].department_name + " " + "price =" + " " + results[i].price;
                 choiceArray.push(item_info);
               };
               return choiceArray
@@ -105,10 +105,41 @@ function buyItem(inquirerResponse) {
             name: "confirm",
             message: "Please confirm your order.",
             default: true,
-            
+
           },
-          
-        ]);
+
+        ])
+        .then(function (inquirerResponse) {
+          if (inquirerResponse.confirm) {
+            let customerItem;
+            console.log(results.length);
+            let customerChoice = str.split(", ")
+            console.log(customerChoice);
+            for (let i = 0; i < results.length; i++) {
+              if (results[i].item_name == customerChoice) {
+                customerItem = results[i];
+                console.log(customerItem);
+              }
+              {
+                console.log(inquirerResponse);
+                console.log(customerItem);
+                console.log(customer.item_id)
+              }
+            }
+            connection.query("SELECT * FROM inventory WHERE ?", {item_id: customerItem.item_id},
+            function(err, results){
+              if(err) throw err;
+              console.log("Success!");
+              console.log(results[0]);
+              //
+              qty =parseInt(inquirerResponse.qty);
+
+            })
+          }
+
+
+
+        })
 
     });
 
