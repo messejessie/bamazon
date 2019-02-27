@@ -25,7 +25,7 @@ connection.connect(function (err) {
   if (err) throw err;
   // run the start function after the connection is made to prompt the user
   //connection.end();
-  console.log("I works");
+  //console.log("I works");
   start()
 });
 function start() {
@@ -124,7 +124,7 @@ function buyItem(inquirerResponse) {
             for (let i = 0; i < results.length; i++) {
               if (results[i].item_name == customerChoice) {
                 customerItem = results[i];
-                console.log(customerItem);
+                //console.log(customerItem);
               }
               // {
               //   console.log(inquirerResponse);
@@ -139,12 +139,30 @@ function buyItem(inquirerResponse) {
                 console.log(results[0]);
                 //
                 qty = parseInt(inquirerResponse.qty);
-                if (results[0].stock_quanity > qty) {
+                if (results[0].stock_quantity > qty) {
                   let total = (qty * customerItem.price);
                   let mess = `Your purchase of ${inquirerResponse.qty} ${customerItem.item_name} ${customerItem.department_name} comes to ${total}! Congrats!`
                   console.log(mess);
+                  var newQty = results[0].stock_quantity - qty;
+                  connection.query("UPDATE inventory SET ? WHERE ?", [
+
+                    {
+                      stock_quanity: newQty
+                    },
+                    {
+                      item_id: customerItem.item_id
+                    }
+                  ],
+                  function (err) {
+                    if (err) throw err;
+                    console.log(mess);
+                    start();
+                  }
+                  );
+
+
                 } else {
-                  mess = `Sorry I only have ${results[0].stock_quanity} in stock for ${customerItem.item_name}`
+                  mess = `Sorry I only have ${results[0].stock_quantity} in stock for ${customerItem.item_name}`
                   console.log(mess);
                 }
 
