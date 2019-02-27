@@ -68,8 +68,10 @@ function start() {
 
           console.log(inquirerResponse.confirm)
           buyItem(inquirerResponse);
+          
         } else {
           console.log("Please come back when you are ready to make a purchase. Have a nice day!");
+          connection.end();
         };
 
       });
@@ -136,7 +138,7 @@ function buyItem(inquirerResponse) {
               function (err, results) {
                 if (err) throw err;
                 console.log("Success!");
-                console.log(results[0]);
+                //console.log(results[0]);
                 //
                 qty = parseInt(inquirerResponse.qty);
                 if (results[0].stock_quantity > qty) {
@@ -147,7 +149,7 @@ function buyItem(inquirerResponse) {
                   connection.query("UPDATE inventory SET ? WHERE ?", [
 
                     {
-                      stock_quanity: newQty
+                      stock_quantity: newQty
                     },
                     {
                       item_id: customerItem.item_id
@@ -173,7 +175,7 @@ function buyItem(inquirerResponse) {
             console.log("Please come back when you are ready to make a purchase. Have a nice day!")
           }
 
-          connection.end();
+ 
 
         });
 
